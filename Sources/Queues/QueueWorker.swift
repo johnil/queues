@@ -57,17 +57,17 @@ public struct QueueWorker {
                     "queue": .string(self.queue.queueName.string)
                 ])
 
-                return self.run(
-                    id: id,
-                    name: data.jobName,
-                    job: job,
-                    payload: data.payload,
-                    logger: logger,
-                    remainingTries: data.maxRetryCount,
-                    jobData: data
-                ).flatMap {
+                return self.queue.clear(id).flatMap{
                     logger.trace("Job done being run")
-                    return self.queue.clear(id)
+                    return self.run(
+                        id: id,
+                        name: data.jobName,
+                        job: job,
+                        payload: data.payload,
+                        logger: logger,
+                        remainingTries: data.maxRetryCount,
+                        jobData: data
+                    )
                 }
             }
         }
